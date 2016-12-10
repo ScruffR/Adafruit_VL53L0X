@@ -1,10 +1,10 @@
 {
-	"name": "Adafruit_VL53L0X
+  "name": "Adafruit_VL53L0X
 ",
-	"author": "Arduino
+  "author": "Arduino
 /Adafruit <support@adafruit.com>
-",
-	"version": "0.0.0",
-	"license": "https://github.com/ScruffR/Adafruit_VL53L0X/LICENSE.pdf",
-	"description": "Sensor driver for VL53L0X Time of Flight sensor"
+ ",
+  "version": "0.0.1",
+  "license": "https://github.com/ScruffR/Adafruit_VL53L0X/LICENSE.pdf",
+  "description": "Sensor driver for VL53L0X Time of Flight sensor"
 }
