@@ -8,8 +8,8 @@
 
 
 boolean Adafruit_VL53L0X::begin(void) {
-  int32_t status_int;
-  int32_t init_done = 0;
+  //int32_t status_int;
+  //int32_t init_done = 0;
 
   // Initialize Comms
   pMyDevice->I2cDevAddr      = 0x29;  // 7 bit addr
@@ -59,10 +59,10 @@ boolean Adafruit_VL53L0X::begin(void) {
 }
 
 
-VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *RangingMeasurementData, boolean debug = false)
+VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *RangingMeasurementData, boolean debug)
 {
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;
-    int i;
+    //int i;
     FixPoint1616_t LimitCheckCurrent;
     uint32_t refSpadCount;
     uint8_t isApertureSpads;
@@ -79,6 +79,14 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
     if(Status == VL53L0X_ERROR_NONE)
     {
       if (debug)
+        Serial.println(F("Call of VL53L0X_PerformRefCalibration"));
+      Status = VL53L0X_PerformRefCalibration(pMyDevice,
+		&VhvSettings, &PhaseCal); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+      if (debug)
         Serial.println(F("Call of VL53L0X_PerformRefSpadManagement"));
       Status = VL53L0X_PerformRefSpadManagement(pMyDevice,
             &refSpadCount, &isApertureSpads); // Device Initialization
@@ -88,14 +96,6 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
         Serial.print(F(", isApertureSpads = "));
         Serial.println(isApertureSpads);
       }
-    }
-
-    if(Status == VL53L0X_ERROR_NONE)
-    {
-      if (debug)
-        Serial.println(F("Call of VL53L0X_PerformRefCalibration"));
-      Status = VL53L0X_PerformRefCalibration(pMyDevice,
-		&VhvSettings, &PhaseCal); // Device Initialization
     }
 
     if(Status == VL53L0X_ERROR_NONE)

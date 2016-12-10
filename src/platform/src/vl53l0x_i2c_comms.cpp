@@ -56,13 +56,13 @@ int VL53L0X_write_byte(uint8_t deviceAddress, uint8_t index, uint8_t data) {
 
 int VL53L0X_write_word(uint8_t deviceAddress, uint8_t index, uint16_t data) {
   uint8_t buff[2];
-  memcpy(buff, data, 2);
+  memcpy(buff, (const void*)&data, 2);
   return VL53L0X_write_multi(deviceAddress, index, buff, 2);
 }
 
 int VL53L0X_write_dword(uint8_t deviceAddress, uint8_t index, uint32_t data) {
   uint8_t buff[4];
-  memcpy(buff, data, 4);
+  memcpy(buff, (const void*)&data, 4);
   return VL53L0X_write_multi(deviceAddress, index, buff, 4);
 }
 

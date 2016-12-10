@@ -14,12 +14,17 @@
   BSD license, all text above must be included in any redistribution
  ****************************************************/
 
-#if (ARDUINO >= 100)
- #include "Arduino.h"
+#if defined(PARTICLE)
+#  define _PARTICLE_BUILD_IDE_  // undefine for Particle CLI or Particle Dev
+#  include "Particle.h"
 #else
- #include "WProgram.h"
+#  if (ARDUINO >= 100)
+#    include "Arduino.h"
+#  else
+#    include "WProgram.h"
+#  endif
+#  include "Wire.h"
 #endif
-#include "Wire.h"
 
 #include "vl53l0x_api.h"
 

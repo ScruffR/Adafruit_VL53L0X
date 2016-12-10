@@ -1,5 +1,13 @@
-#include "Arduino.h"
-#include "Wire.h"
+#if defined(PARTICLE)
+#  include "Particle.h"
+#else
+#  if (ARDUINO >= 100)
+#    include "Arduino.h"
+#  else
+#    include "WProgram.h"
+#  endif
+#  include "Wire.h"
+#endif
 
 // initialize I2C
 int VL53L0X_i2c_init(void);
