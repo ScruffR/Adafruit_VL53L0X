@@ -1,22 +1,23 @@
-#include "Adafruit_VL53L0X.h"
+
+#define _PARTICLE_BUILD_IDE_  // undefine for Particle CLI or Particle Dev
+#if define(_PARTICLE_BUILD_IDE_)
+#  include "Adafruit_VL53L0X/Adafruit_VL53L0X.h"
+#else
+#  include "Adafruit_VL53L0X.h"
+#endif
 
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
 void setup() {
   Serial.begin(115200);
 
-  // wait until serial port opens for native USB devices
-  while (! Serial) {
-    delay(1);
-  }
-  
   Serial.println("Adafruit VL53L0X test");
   if (!lox.begin()) {
-    Serial.println(F("Failed to boot VL53L0X"));
-    while(1);
+    Serial.println("Failed to boot VL53L0X");
+    while(1) Particle.process();
   }
   // power 
-  Serial.println(F("VL53L0X API Simple Ranging example\n\n")); 
+  Serial.println("VL53L0X API Simple Ranging example\n\n"); 
 }
 
 
