@@ -1,9 +1,6 @@
 {
-  "name": "Adafruit_VL53L0X
-",
-  "author": "Arduino
- - Adafruit <support@adafruit.com>
-",
+  "name": "Adafruit_VL53L0X",
+  "author": "Arduino - Adafruit <support@adafruit.com>",
   "version": "0.0.2",
   "license": "LICENSE.pdf",
   "description": "Sensor driver for VL53L0X Time of Flight sensor"

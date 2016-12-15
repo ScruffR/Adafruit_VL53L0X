@@ -1,5 +1,4 @@
-
-#define x_PARTICLE_BUILD_IDE_  // undefine for Particle CLI or Particle Dev
+#define _PARTICLE_BUILD_IDE_  // undefine for Particle CLI or Particle Dev
 #if defined(_PARTICLE_BUILD_IDE_)
 #  include "Adafruit_VL53L0X/Adafruit_VL53L0X.h"
 #else
