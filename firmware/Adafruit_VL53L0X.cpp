@@ -12,9 +12,9 @@ boolean Adafruit_VL53L0X::begin(void) {
   //int32_t init_done = 0;
 
   // Initialize Comms
-  pMyDevice->I2cDevAddr      = 0x29;  // 7 bit addr
-  pMyDevice->comms_type      =  1;
-  pMyDevice->comms_speed_khz =  400;
+  pMyDevice->I2cDevAddr      = VL53L0X_I2C_ADDR;  // 7 bit addr
+  pMyDevice->comms_type      = 1;
+  pMyDevice->comms_speed_khz = 400;
 
   
   Wire.begin();  // VL53L0X_i2c_init();
@@ -32,27 +32,26 @@ boolean Adafruit_VL53L0X::begin(void) {
   Status = VL53L0X_DataInit(&MyDevice); // Data initialization
 
   Status = VL53L0X_GetDeviceInfo(&MyDevice, &DeviceInfo);
+
   if (Status != VL53L0X_ERROR_NONE)
     return false;
 
   if(Status == VL53L0X_ERROR_NONE)  {
-  /*
-     Serial.println(F("VL53L0X_GetDeviceInfo:"));
-     Serial.print(F("Device Name : ")); Serial.println(DeviceInfo.Name);
-     Serial.print(F("Device Type : ")); Serial.println(DeviceInfo.Type);
-     Serial.print(F("Device ID : ")); Serial.println(DeviceInfo.ProductId);
-     Serial.print(F("ProductRevisionMajor : ")); Serial.println(DeviceInfo.ProductRevisionMajor);
-     Serial.print(F("ProductRevisionMinor : ")); Serial.println(DeviceInfo.ProductRevisionMinor);
-  */
-     if ((DeviceInfo.ProductRevisionMinor != 1) && (DeviceInfo.ProductRevisionMinor != 1)) {
-       /*
-       Serial.print(F("Error expected cut 1.1 but found cut ")); 
-       Serial.print(DeviceInfo.ProductRevisionMajor);
-       Serial.print('.');
-       Serial.println(DeviceInfo.ProductRevisionMinor);
-       */
-       Status = VL53L0X_ERROR_NOT_SUPPORTED;
-       return false;     
+    //Serial.println(F("VL53L0X_GetDeviceInfo:"));
+    //Serial.print(F("Device Name : ")); Serial.println(DeviceInfo.Name);
+    //Serial.print(F("Device Type : ")); Serial.println(DeviceInfo.Type);
+    //Serial.print(F("Device ID : ")); Serial.println(DeviceInfo.ProductId);
+    //Serial.print(F("ProductRevisionMajor : ")); Serial.println(DeviceInfo.ProductRevisionMajor);
+    //Serial.print(F("ProductRevisionMinor : ")); Serial.println(DeviceInfo.ProductRevisionMinor);
+
+    if ((DeviceInfo.ProductRevisionMinor != 1) || (DeviceInfo.ProductRevisionMinor != 1)) {
+      Serial.print(F("Error expected cut 1.1 but found cut ")); 
+      Serial.print(DeviceInfo.ProductRevisionMajor);
+      Serial.print('.');
+      Serial.println(DeviceInfo.ProductRevisionMinor);
+      Status = VL53L0X_ERROR_NOT_SUPPORTED;
+
+      return false;     
      }
   }
   return true;

@@ -30,6 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _VL53L0X_PLATFORM_LOG_H_
 #define _VL53L0X_PLATFORM_LOG_H_
 
+#include "vl53l0x_types.h"
 #include <stdio.h>
 #include <string.h>
 /* LOG Functions */
@@ -44,7 +45,7 @@ extern "C" {
  * @brief platform log function definition
  */
 
-//#define VL53L0X_LOG_ENABLE 0
+#define VL53L0X_LOG_ENABLE 0
 
 enum {
     TRACE_LEVEL_NONE,
@@ -85,7 +86,11 @@ void trace_print_module_function(uint32_t module, uint32_t level, uint32_t funct
 
 //extern FILE * log_file;
 
-#define LOG_GET_TIME() (int)clock()
+#if defined(PARTICLE)
+#  define LOG_GET_TIME() (int)millis()
+#else
+#  define LOG_GET_TIME() (int)clock()
+#endif
 
 #define _LOG_FUNCTION_START(module, fmt, ... ) \
         trace_print_module_function(module, _trace_level, TRACE_FUNCTION_ALL, "%ld <START> %s " fmt "\n", LOG_GET_TIME(), __FUNCTION__, ##__VA_ARGS__);

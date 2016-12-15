@@ -392,7 +392,7 @@ VL53L0X_Error VL53L0X_DataInit(VL53L0X_DEV Dev)
 	uint8_t b;
 	Status = VL53L0X_RdByte(Dev, 0xC0, &b);
 	//Serial.print("WHOAMI: 0x"); Serial.println(b, HEX);
-	   
+
 	/* read WHO_AM_I */
 
 	VL53L0X_SETDEVICESPECIFICPARAMETER(Dev, ReadDataFromDeviceDone, 0);
@@ -477,7 +477,8 @@ VL53L0X_Error VL53L0X_DataInit(VL53L0X_DEV Dev)
 			VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
 				(FixPoint1616_t)(18 * 65536));
 	}
-	if (Status == VL53L0X_ERROR_NONE) {
+
+  if (Status == VL53L0X_ERROR_NONE) {
 		Status = VL53L0X_SetLimitCheckValue(Dev,
 			VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE,
 				(FixPoint1616_t)(25 * 65536 / 100));
