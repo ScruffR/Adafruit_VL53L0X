@@ -1,7 +1,9 @@
-#include "Adafruit_VL53L0X.h"
-
-//SYSTEM_MODE(MANUAL);
-//SYSTEM_THREAD(ENABLED);
+#define _PARTICLE_BUILD_IDE_
+#if defined(_PARTICLE_BUILD_IDE_)
+#  include "Adafruit_VL53L0X/Adafruit_VL53L0X.h"
+#else
+#  include "Adafruit_VL53L0X.h"
+#endif
 
 #define VL53L0X_LOG_ENABLE 0
 uint32_t _trace_level = TRACE_LEVEL_ALL; 
