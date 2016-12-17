@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright © 2016, STMicroelectronics International N.V.
+ Copyright ï¿½ 2016, STMicroelectronics International N.V.
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -625,7 +625,7 @@ VL53L0X_Error enable_ref_spads(VL53L0X_DEV Dev,
 	return status;
 }
 
-
+//PROBLEM IS IN THE FUNCTION BELOW!!!!!!!!!!!!!!!!!!!!
 VL53L0X_Error perform_ref_signal_measurement(VL53L0X_DEV Dev,
 		uint16_t *refSignalRate)
 {
@@ -639,18 +639,22 @@ VL53L0X_Error perform_ref_signal_measurement(VL53L0X_DEV Dev,
 	 */
 
 	SequenceConfig = PALDevDataGet(Dev, SequenceConfig);
-
+////Serial1.print("Status perform_ref_signal_measurement "); //Serial1.println(status);
+//OK til here
 	/*
 	 * This function performs a reference signal rate measurement.
 	 */
 	if (status == VL53L0X_ERROR_NONE)
 		status = VL53L0X_WrByte(Dev,
 			VL53L0X_REG_SYSTEM_SEQUENCE_CONFIG, 0xC0);
+////Serial1.print("Status perform_ref_signal_measurement "); //Serial1.println(status);
 
+//PROBLEM IS VL53L0X_PerformSingleRangingMeasurement!!!!!!!!!!!!!!!!!!!!!!
 	if (status == VL53L0X_ERROR_NONE)
 		status = VL53L0X_PerformSingleRangingMeasurement(Dev,
 				&rangingMeasurementData);
-
+//PROBLEM ABOVE
+////Serial1.print("Status perform_ref_signal_measurement "); //Serial1.println(status);
 	if (status == VL53L0X_ERROR_NONE)
 		status = VL53L0X_WrByte(Dev, 0xFF, 0x01);
 
@@ -669,7 +673,8 @@ VL53L0X_Error perform_ref_signal_measurement(VL53L0X_DEV Dev,
 		if (status == VL53L0X_ERROR_NONE)
 			PALDevDataSet(Dev, SequenceConfig, SequenceConfig);
 	}
-
+	//PROBLEM IS ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+////Serial1.print("Status perform_ref_signal_measurement "); //Serial1.println(status);
 	return status;
 }
 
@@ -720,8 +725,10 @@ VL53L0X_Error VL53L0X_perform_ref_spad_management(VL53L0X_DEV Dev,
 	 * quadrant.
 	 */
 
+//	 //Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	targetRefRate = PALDevDataGet(Dev, targetRefRate);
+//	//Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	/*
 	 * Initialize Spad arrays.
@@ -757,11 +764,13 @@ VL53L0X_Error VL53L0X_perform_ref_spad_management(VL53L0X_DEV Dev,
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_WrByte(Dev,
 				VL53L0X_REG_POWER_MANAGEMENT_GO1_POWER_FORCE, 0);
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	/* Perform ref calibration */
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_perform_ref_calibration(Dev, &VhvSettings,
 			&PhaseCal, 0);
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	if (Status == VL53L0X_ERROR_NONE) {
 		/* Enable Minimum NON-APERTURE Spads */
@@ -778,12 +787,16 @@ VL53L0X_Error VL53L0X_perform_ref_spad_management(VL53L0X_DEV Dev,
 					minimumSpadCount,
 					&lastSpadIndex);
 	}
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	if (Status == VL53L0X_ERROR_NONE) {
 		currentSpadIndex = lastSpadIndex;
 
 		Status = perform_ref_signal_measurement(Dev,
 			&peakSignalRateRef);
+//PROBLEM IS IN perform_ref_signal_measurement!!!!!!!!!!!!!!!!!!!!!!!!
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
+
 		if ((Status == VL53L0X_ERROR_NONE) &&
 			(peakSignalRateRef > targetRefRate)) {
 			/* Signal rate measurement too high,
@@ -810,6 +823,8 @@ VL53L0X_Error VL53L0X_perform_ref_spad_management(VL53L0X_DEV Dev,
 					currentSpadIndex,
 					minimumSpadCount,
 					&lastSpadIndex);
+//PROBLEM ABOVE!!!!!!!!!!!!!!!!!!!!!!
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 			if (Status == VL53L0X_ERROR_NONE) {
 				currentSpadIndex = lastSpadIndex;
@@ -832,6 +847,8 @@ VL53L0X_Error VL53L0X_perform_ref_spad_management(VL53L0X_DEV Dev,
 			needAptSpads = 0;
 		}
 	}
+//PROBLEM ABOVE!!!!!!!!!!!!!!!!!!!!!!
+////Serial1.print("!!!!!!******IN VL53L0X_perform_ref_spad_management");//Serial1.println(Status);
 
 	if ((Status == VL53L0X_ERROR_NONE) &&
 		(peakSignalRateRef < targetRefRate)) {

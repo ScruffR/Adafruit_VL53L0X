@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright © 2016, STMicroelectronics International N.V.
+ Copyright ï¿½ 2016, STMicroelectronics International N.V.
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -391,7 +391,7 @@ VL53L0X_Error VL53L0X_DataInit(VL53L0X_DEV Dev)
 	/* read WHO_AM_I */
 	uint8_t b;
 	Status = VL53L0X_RdByte(Dev, 0xC0, &b);
-	//Serial.print("WHOAMI: 0x"); Serial.println(b, HEX);
+	////Serial1.print("WHOAMI: 0x"); //Serial1.println(b, HEX);
 
 	/* read WHO_AM_I */
 
@@ -477,8 +477,7 @@ VL53L0X_Error VL53L0X_DataInit(VL53L0X_DEV Dev)
 			VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
 				(FixPoint1616_t)(18 * 65536));
 	}
-
-  if (Status == VL53L0X_ERROR_NONE) {
+	if (Status == VL53L0X_ERROR_NONE) {
 		Status = VL53L0X_SetLimitCheckValue(Dev,
 			VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE,
 				(FixPoint1616_t)(25 * 65536 / 100));
@@ -572,10 +571,11 @@ VL53L0X_Error VL53L0X_StaticInit(VL53L0X_DEV Dev)
 	uint8_t vcselPulsePeriodPCLK;
 	FixPoint1616_t seqTimeoutMilliSecs;
 
+//Serial1.print("******BEGIN VL53L0X_StaticInit");//Serial1.println(Status);
 	LOG_FUNCTION_START("");
 
 	Status = VL53L0X_get_info_from_device(Dev, 1);
-
+//Serial1.print("******after get_info_from_device VL53L0X_StaticInit");//Serial1.println(Status);
 	/* set the ref spad from NVM */
 	count	= (uint32_t)VL53L0X_GETDEVICESPECIFICPARAMETER(Dev,
 		ReferenceSpadCount);
@@ -586,11 +586,16 @@ VL53L0X_Error VL53L0X_StaticInit(VL53L0X_DEV Dev)
 	if ((ApertureSpads > 1) ||
 		((ApertureSpads == 1) && (count > 32)) ||
 		((ApertureSpads == 0) && (count > 12)))
+{
 		Status = VL53L0X_perform_ref_spad_management(Dev, &refSpadCount,
 			&isApertureSpads);
+	//Serial1.print("******after VL53L0X_perform_ref_spad_management VL53L0X_StaticInit");//Serial1.println(Status);
+//PROBLEM IS JUST ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!
+}
 	else
 		Status = VL53L0X_set_reference_spads(Dev, count, ApertureSpads);
 
+		//Serial1.print("******after VL53L0X_set_reference_spads VL53L0X_StaticInit");//Serial1.println(Status);
 
 	/* Initialize tuning settings buffer to prevent compiler warning. */
 	pTuningSettingBuffer = DefaultTuningSettings;
@@ -644,6 +649,7 @@ VL53L0X_Error VL53L0X_StaticInit(VL53L0X_DEV Dev)
 
 	if (Status == VL53L0X_ERROR_NONE)
 		PALDevDataSet(Dev, CurrentParameters, CurrentParameters);
+
 
 
 	/* read the sequence config and save it */
@@ -731,7 +737,7 @@ VL53L0X_Error VL53L0X_StaticInit(VL53L0X_DEV Dev)
 			FinalRangeTimeoutMicroSecs,
 			seqTimeoutMilliSecs);
 	}
-
+//Serial1.print("******END VL53L0X_StaticInit");//Serial1.println(Status);
 	LOG_FUNCTION_END(Status);
 	return Status;
 }
@@ -2396,17 +2402,20 @@ VL53L0X_Error VL53L0X_GetRangingMeasurementData(VL53L0X_DEV Dev,
 	 * start reading at 0x14 dec20
 	 * end reading at 0x21 dec33 total 14 bytes to read
 	 */
+//PROBLEM IS VL53L0X_ReadMulti!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	Status = VL53L0X_ReadMulti(Dev, 0x14, localBuffer, 12);
+	//Serial1.print(F("!!!!!!******AFTER  VL53L0X_ReadMulti"));//Serial1.println(Status);
 
 	if (Status == VL53L0X_ERROR_NONE) {
 
 		pRangingMeasurementData->ZoneId = 0; /* Only one zone */
 		pRangingMeasurementData->TimeStamp = 0; /* Not Implemented */
-
+//Serial1.println("before call to VL53L0X_MAKEUINT16");
 		tmpuint16 = VL53L0X_MAKEUINT16(localBuffer[11], localBuffer[10]);
 		/* cut1.1 if SYSTEM__RANGE_CONFIG if 1 range is 2bits fractional
 		 *(format 11.2) else no fractional
 		 */
+		 //Serial1.println("AFTER call to VL53L0X_MAKEUINT16");
 
 		pRangingMeasurementData->MeasurementTimeUsec = 0;
 
@@ -2439,6 +2448,8 @@ VL53L0X_Error VL53L0X_GetRangingMeasurementData(VL53L0X_DEV Dev,
 
 			tmpuint16 = (uint16_t)((LinearityCorrectiveGain
 				* tmpuint16 + 500) / 1000);
+
+//Serial1.println("before call to VL53L0X_GETPARAMETERFIELD");
 
 			/* Implement Xtalk */
 			VL53L0X_GETPARAMETERFIELD(Dev,
@@ -2488,9 +2499,11 @@ VL53L0X_Error VL53L0X_GetRangingMeasurementData(VL53L0X_DEV Dev,
 		 * The range status depends on the device so call a device
 		 * specific function to obtain the right Status.
 		 */
+//Serial1.println("before call to VL53L0X_get_pal_range_status");
 		Status |= VL53L0X_get_pal_range_status(Dev, DeviceRangeStatus,
 			SignalRate, EffectiveSpadRtnCount,
 			pRangingMeasurementData, &PalRangeStatus);
+			//Serial1.println("AFTER call to VL53L0X_get_pal_range_status");
 
 		if (Status == VL53L0X_ERROR_NONE)
 			pRangingMeasurementData->RangeStatus = PalRangeStatus;
@@ -2499,6 +2512,7 @@ VL53L0X_Error VL53L0X_GetRangingMeasurementData(VL53L0X_DEV Dev,
 
 	if (Status == VL53L0X_ERROR_NONE) {
 		/* Copy last read data into Dev buffer */
+//Serial1.println("before call to PALDevDataGet");
 		LastRangeDataBuffer = PALDevDataGet(Dev, LastRangeMeasure);
 
 		LastRangeDataBuffer.RangeMilliMeter =
@@ -2517,8 +2531,9 @@ VL53L0X_Error VL53L0X_GetRangingMeasurementData(VL53L0X_DEV Dev,
 			pRangingMeasurementData->EffectiveSpadRtnCount;
 		LastRangeDataBuffer.RangeStatus =
 			pRangingMeasurementData->RangeStatus;
-
+//Serial1.println("before call to PALDevDataSet");
 		PALDevDataSet(Dev, LastRangeMeasure, LastRangeDataBuffer);
+//Serial1.println("AFTER call to PALDevDataSet");
 	}
 
 	LOG_FUNCTION_END(Status);
@@ -2562,6 +2577,7 @@ VL53L0X_Error VL53L0X_PerformSingleRangingMeasurement(VL53L0X_DEV Dev,
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_PerformSingleMeasurement(Dev);
 
+//PROBLEM IS VL53L0X_GetRangingMeasurementData!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_GetRangingMeasurementData(Dev,
 			pRangingMeasurementData);
@@ -2850,7 +2866,7 @@ VL53L0X_Error VL53L0X_GetStopCompletedStatus(VL53L0X_DEV Dev,
 		Status = VL53L0X_WrByte(Dev, 0xFF, 0x0);
 
 	*pStopStatus = Byte;
-	
+
 	if (Byte == 0) {
 		Status = VL53L0X_WrByte(Dev, 0x80, 0x01);
 		Status = VL53L0X_WrByte(Dev, 0xFF, 0x01);

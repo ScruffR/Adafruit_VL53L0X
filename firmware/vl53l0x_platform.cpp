@@ -1,5 +1,5 @@
 /*******************************************************************************
-Copyright © 2015, STMicroelectronics International N.V.
+Copyright ï¿½ 2015, STMicroelectronics International N.V.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -133,9 +133,10 @@ VL53L0X_Error VL53L0X_ReadMulti(VL53L0X_DEV Dev, uint8_t index, uint8_t *pdata, 
     }
 
     deviceAddress = Dev->I2cDevAddr;
-
+    //Serial1.println(F("before VL53L0X_read_multi"));
+//    VL53L0X_read_multi is problem!!!!!!!!!!!!!!!!!!!!!
 	status_int = VL53L0X_read_multi(deviceAddress, index, pdata, count);
-
+    //Serial1.println(F("after VL53L0X_read_multi"));
 	if (status_int != 0)
 		Status = VL53L0X_ERROR_CONTROL_INTERFACE;
 

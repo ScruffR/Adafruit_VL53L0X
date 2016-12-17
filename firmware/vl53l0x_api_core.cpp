@@ -1,5 +1,5 @@
 /*******************************************************************************
- Copyright © 2016, STMicroelectronics International N.V.
+ Copyright ï¿½ 2016, STMicroelectronics International N.V.
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,6 @@
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
-
 #include "vl53l0x_api.h"
 #include "vl53l0x_api_core.h"
 #include "vl53l0x_api_calibration.h"
@@ -2074,22 +2073,30 @@ VL53L0X_Error VL53L0X_get_pal_range_status(VL53L0X_DEV Dev,
 	} else {
 		NoneFlag = 0;
 	}
+	//Serial1.println("before call to VL53L0X_WrByte");
 
 	/* LastSignalRefMcps */
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_WrByte(Dev, 0xFF, 0x01);
-
+//Serial1.println("AFTER call to VL53L0X_WrByte");
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_RdWord(Dev,
 			VL53L0X_REG_RESULT_PEAK_SIGNAL_RATE_REF,
 			&tmpWord);
-
+	//Serial1.println("before call to VL53L0X_FIXPOINT97TOFIXPOINT1616");
 	LastSignalRefMcps = VL53L0X_FIXPOINT97TOFIXPOINT1616(tmpWord);
+	//Serial1.println("after call to VL53L0X_FIXPOINT97TOFIXPOINT1616");
 
+	//Serial1.println("before call to VL53L0X_WrByte");
+	//Serial1.print("Status == VL53L0X_ERROR_NONE ");	//Serial1.println(Status);
 	if (Status == VL53L0X_ERROR_NONE)
 		Status = VL53L0X_WrByte(Dev, 0xFF, 0x00);
+//Serial1.println("AFTER call to VL53L0X_WrByte");
+
+		//Serial1.println("before call to PALDevDataSet");
 
 	PALDevDataSet(Dev, LastSignalRefMcps, LastSignalRefMcps);
+	//Serial1.println("after call to PALDevDataSet");
 
 	/*
 	 * Check if Sigma limit is enabled, if yes then do comparison with limit

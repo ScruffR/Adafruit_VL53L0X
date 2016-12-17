@@ -55,15 +55,19 @@ int VL53L0X_write_byte(uint8_t deviceAddress, uint8_t index, uint8_t data) {
 }
 
 int VL53L0X_write_word(uint8_t deviceAddress, uint8_t index, uint16_t data) {
-  uint8_t buff[2];
-  memcpy(buff, (const void*)&data, 2);
-  return VL53L0X_write_multi(deviceAddress, index, buff, 2);
+  uint8_t buf[4];
+  buf[1] = data>>0&0xFF;
+  buf[0] = data>>8&0xFF;
+  return VL53L0X_write_multi(deviceAddress, index, buf, 2);
 }
 
 int VL53L0X_write_dword(uint8_t deviceAddress, uint8_t index, uint32_t data) {
-  uint8_t buff[4];
-  memcpy(buff, (const void*)&data, 4);
-  return VL53L0X_write_multi(deviceAddress, index, buff, 4);
+  uint8_t buf[4];
+  buf[3] = data>>0&0xFF;
+  buf[2] = data>>8&0xFF;
+  buf[1] = data>>16&0xFF;
+  buf[0] = data>>24&0xFF;
+  return VL53L0X_write_multi(deviceAddress, index, buf, 4);
 }
 
 int VL53L0X_read_byte(uint8_t deviceAddress, uint8_t index, uint8_t *data) {
@@ -71,15 +75,23 @@ int VL53L0X_read_byte(uint8_t deviceAddress, uint8_t index, uint8_t *data) {
 }
 
 int VL53L0X_read_word(uint8_t deviceAddress, uint8_t index, uint16_t *data) {
-  uint8_t buffer[2];
-  int r = VL53L0X_read_multi(deviceAddress, index, buffer, 2);
-  memcpy(data, buffer, 2);
+  uint8_t buf[2];
+  int r = VL53L0X_read_multi(deviceAddress, index, buf, 2);
+  uint16_t tmp = 0;
+  tmp |= buf[1]<<0;
+  tmp |= buf[0]<<8;
+  *data = tmp;
   return r;
 }
 
 int VL53L0X_read_dword(uint8_t deviceAddress, uint8_t index, uint32_t *data) {
-  uint8_t buffer[4];
-  int r = VL53L0X_read_multi(deviceAddress, index, buffer, 4);
-  memcpy(data, buffer, 4);
+  uint8_t buf[4];
+  int r = VL53L0X_read_multi(deviceAddress, index, buf, 4);
+  uint32_t tmp = 0;
+  tmp |= buf[3]<<0;
+  tmp |= buf[2]<<8;
+  tmp |= buf[1]<<16;
+  tmp |= buf[0]<<24;
+  *data = tmp;
   return r;
 }
