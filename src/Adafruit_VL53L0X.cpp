@@ -23,9 +23,13 @@ boolean Adafruit_VL53L0X::begin(void) {
   if( VL53L0X_IMPLEMENTATION_VER_MAJOR != VERSION_REQUIRED_MAJOR ||
       VL53L0X_IMPLEMENTATION_VER_MINOR != VERSION_REQUIRED_MINOR ||
       VL53L0X_IMPLEMENTATION_VER_SUB != VERSION_REQUIRED_BUILD )  {
-
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+    Log.info("Found " STR(VL53L0X_IMPLEMENTATION_VER_MAJOR) "." STR(VL53L0X_IMPLEMENTATION_VER_MINOR) "."  STR(VL53L0X_IMPLEMENTATION_VER_SUB) " rev " STR(VL53L0X_IMPLEMENTATION_VER_REVISION));
+    Log.info("Requires " STR(VERSION_REQUIRED_MAJOR) "." STR(VERSION_REQUIRED_MINOR) "." STR(VERSION_REQUIRED_BUILD));
+#else
     Serial.println(F("Found " STR(VL53L0X_IMPLEMENTATION_VER_MAJOR) "." STR(VL53L0X_IMPLEMENTATION_VER_MINOR) "."  STR(VL53L0X_IMPLEMENTATION_VER_SUB) " rev " STR(VL53L0X_IMPLEMENTATION_VER_REVISION)));
     Serial.println(F("Requires " STR(VERSION_REQUIRED_MAJOR) "." STR(VERSION_REQUIRED_MINOR) "." STR(VERSION_REQUIRED_BUILD)));
+#endif
     return false;
   }
 
@@ -45,10 +49,14 @@ boolean Adafruit_VL53L0X::begin(void) {
     //Serial.print(F("ProductRevisionMinor : ")); Serial.println(DeviceInfo.ProductRevisionMinor);
 
     if ((DeviceInfo.ProductRevisionMinor != 1) || (DeviceInfo.ProductRevisionMinor != 1)) {
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+      Log.info("Error expected cut 1.1 but found cut %d.%d", DeviceInfo.ProductRevisionMajor, DeviceInfo.ProductRevisionMinor);
+#else
       Serial.print(F("Error expected cut 1.1 but found cut ")); 
       Serial.print(DeviceInfo.ProductRevisionMajor);
       Serial.print('.');
       Serial.println(DeviceInfo.ProductRevisionMinor);
+#endif
       Status = VL53L0X_ERROR_NOT_SUPPORTED;
 
       return false;     
@@ -71,14 +79,22 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
     if(Status == VL53L0X_ERROR_NONE)
     {
       if (debug)
-	Serial.println(F("Call of VL53L0X_StaticInit"));
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("Call of VL53L0X_StaticInit");
+#else
+      	Serial.println(F("Call of VL53L0X_StaticInit"));
+#endif
       Status = VL53L0X_StaticInit(pMyDevice); // Device Initialization
     }
     
     if(Status == VL53L0X_ERROR_NONE)
     {
       if (debug)
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("Call of VL53L0X_PerformRefCalibration");
+#else
         Serial.println(F("Call of VL53L0X_PerformRefCalibration"));
+#endif
       Status = VL53L0X_PerformRefCalibration(pMyDevice,
 		&VhvSettings, &PhaseCal); // Device Initialization
     }
@@ -86,14 +102,22 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
     if(Status == VL53L0X_ERROR_NONE)
     {
       if (debug)
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("Call of VL53L0X_PerformRefSpadManagement");
+#else
         Serial.println(F("Call of VL53L0X_PerformRefSpadManagement"));
+#endif
       Status = VL53L0X_PerformRefSpadManagement(pMyDevice,
             &refSpadCount, &isApertureSpads); // Device Initialization
       if (debug) {
-	Serial.print(F("refSpadCount = ")); 
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("refSpadCount = %u, isApertureSpads = %u", refSpadCount, isApertureSpads);
+#else
+        Serial.print(F("refSpadCount = "));
         Serial.print(refSpadCount);
         Serial.print(F(", isApertureSpads = "));
         Serial.println(isApertureSpads);
+#endif
       }
     }
 
@@ -101,7 +125,11 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
     {
         // no need to do this when we use VL53L0X_PerformSingleRangingMeasurement
       if (debug)
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("Call of VL53L0X_SetDeviceMode");
+#else
         Serial.println(F("Call of VL53L0X_SetDeviceMode"));
+#endif
       Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
     }
 
@@ -134,7 +162,11 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
     if(Status == VL53L0X_ERROR_NONE)
     {
       if (debug)
-	Serial.println(F("Call of VL53L0X_PerformSingleRangingMeasurement"));
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("Call of VL53L0X_PerformSingleRangingMeasurement");
+#else
+        Serial.println(F("Call of VL53L0X_PerformSingleRangingMeasurement"));
+#endif
       Status = VL53L0X_PerformSingleRangingMeasurement(pMyDevice,
 						       RangingMeasurementData);
       
@@ -145,18 +177,18 @@ VL53L0X_Error Adafruit_VL53L0X::rangingTest(VL53L0X_RangingMeasurementData_t *Ra
 				   VL53L0X_CHECKENABLE_RANGE_IGNORE_THRESHOLD, &LimitCheckCurrent);
       
       if (debug) {
-	Serial.print(F("RANGE IGNORE THRESHOLD: "));
-	Serial.println((float)LimitCheckCurrent/65536.0);
-	
-	Serial.print(F("Measured distance: "));
-	Serial.println(RangingMeasurementData->RangeMilliMeter);
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+        Log.info("RANGE IGNORE THRESHOLD: %f, Measured distance: %d", (float)LimitCheckCurrent / 65536.0, RangingMeasurementData->RangeMilliMeter);
+#else
+        Serial.print(F("RANGE IGNORE THRESHOLD: "));
+	      Serial.println((float)LimitCheckCurrent/65536.0);
+	    	Serial.print(F("Measured distance: "));
+      	Serial.println(RangingMeasurementData->RangeMilliMeter);
+#endif
       }
     }
     return Status;
 }
-
-
-
 
 void Adafruit_VL53L0X::print_range_status(VL53L0X_RangingMeasurementData_t* pRangingMeasurementData){
     char buf[VL53L0X_MAX_STRING_LENGTH];
@@ -169,10 +201,13 @@ void Adafruit_VL53L0X::print_range_status(VL53L0X_RangingMeasurementData_t* pRan
     RangeStatus = pRangingMeasurementData->RangeStatus;
 
     VL53L0X_GetRangeStatusString(RangeStatus, buf);
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+    Log.info("Range Status: %u : %s", RangeStatus, buf);
+#else
     Serial.print(F("Range Status: "));
     Serial.print(RangeStatus);
     Serial.print(" : "); 
     Serial.println(buf);
-
+#endif
 }
 

@@ -18,7 +18,7 @@ void trace_print_module_function(uint32_t module, uint32_t level, uint32_t funct
   vsprintf(msg, format, args);
   va_end(args);
 
-#if (SYSTEM_VERSION >= 0x00060000)
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
   Log((LogLevel)level, msg);
 #else
   Serial.printlnf("%s\rmodule: %u, level: %u, function: %08x", msg, module, level, function);

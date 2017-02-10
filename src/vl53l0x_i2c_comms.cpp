@@ -12,17 +12,27 @@ int VL53L0X_write_multi(uint8_t deviceAddress, uint8_t index, uint8_t *pdata, ui
   Wire.beginTransmission(deviceAddress);
   Wire.write(index);
 #ifdef I2C_DEBUG
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+  Log.info("\tWriting %d to addr 0x02x : ", count, index);
+#else
   Serial.print("\tWriting "); Serial.print(count); Serial.print(" to addr 0x"); Serial.print(index, HEX); Serial.print(": ");
+#endif
 #endif
   while(count--) {
     Wire.write((uint8_t)pdata[0]);
 #ifdef I2C_DEBUG
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+    Log.info("0x%02x, ", pdata[0]);
+#else
     Serial.print("0x"); Serial.print(pdata[0], HEX); Serial.print(", ");
+#endif
 #endif
     pdata++;
   }
 #ifdef I2C_DEBUG
+#if !(defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000))
   Serial.println();
+#endif
 #endif
   Wire.endTransmission();
   return VL53L0X_ERROR_NONE;
@@ -34,18 +44,28 @@ int VL53L0X_read_multi(uint8_t deviceAddress, uint8_t index, uint8_t *pdata, uin
   Wire.endTransmission();
   Wire.requestFrom(deviceAddress, (byte)count);
 #ifdef I2C_DEBUG
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+  Log.info("\tReading %d from addr 0x%02x : ", count, index);
+#else
   Serial.print("\tReading "); Serial.print(count); Serial.print(" from addr 0x"); Serial.print(index, HEX); Serial.print(": ");
+#endif
 #endif
 
   while (count--) {
     pdata[0] = Wire.read();
 #ifdef I2C_DEBUG
+#if defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000)
+    Log.info("0x%02x,", pdata[0]);
+#else
     Serial.print("0x"); Serial.print(pdata[0], HEX); Serial.print(", ");
+#endif
 #endif
     pdata++;
   }
 #ifdef I2C_DEBUG
+#if !(defined(PARTICLE) && (SYSTEM_VERSION >= 0x00060000))
   Serial.println();
+#endif
 #endif
   return VL53L0X_ERROR_NONE;
 }
